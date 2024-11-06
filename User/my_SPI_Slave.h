@@ -43,7 +43,7 @@ typedef struct
 
 void my_SPI_Selve_Init();
 void my_spi_SNK(uint8_t PDO_Len,uint16_t Current);
-void my_spi_SRC(uint8_t PDO_Len, uint16_t Current, uint8_t status);
+void my_spi_SRC(uint8_t PDO_Len, uint16_t Current, uint8_t status,uint8_t test_mode);
 void my_spi_disconnect();
 void my_spi_handle();
 

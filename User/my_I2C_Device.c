@@ -291,6 +291,7 @@ void my_SC8726_Set_Out_Vbus(uint16_t Vbus, uint16_t Current)
 
     // sc8726.Set_Out_Current = Current*10/12.5;
     sc8726.Set_Out_Current = (uint8_t)(Current * 4 / 5);
+    // sc8726.Set_Out_Current = 80;
     printf("sc8726.Set_Out_Current = %d\r\n", sc8726.Set_Out_Current);
 
     if (sc8726.Out_Status == 0)

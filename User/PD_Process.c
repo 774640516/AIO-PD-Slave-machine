@@ -64,6 +64,8 @@ uint8_t valve_connect = 0; // 阀门连接状态
 uint8_t pd_valve_status = 0;
 uint16_t pd_valve_time = 0;
 
+uint8_t pd_Test_mode = 0;
+
 #define CONNECT_TIMEOUT 3000
 /* PD3.0 */
 UINT8 SrcCap_Ext_Tab[28] =
@@ -110,7 +112,7 @@ UINT8 Status_Ext_Tab[8] =
         0X00,
 };
 
-void my_PD_Valve_Receive(uint8_t *buff)     //PD接收数据处理函数
+void my_PD_Valve_Receive(uint8_t *buff) // PD接收数据处理函数
 {
     if (buff[2] == 0xAA && buff[3] == 0x55)
     {
@@ -154,6 +156,24 @@ void my_PD_Valve_Receive(uint8_t *buff)     //PD接收数据处理函数
             {
             case 0: // 阀门自检成功
                 my_SPI_ControlData_off(2, 0);
+                break;
+            }
+        }
+        else if (buff[0] == 0x04)
+        {
+            switch (buff[1])
+            {
+            case 0:
+                my_SPI_ControlData_on(0x0a, 1);
+                break;
+            case 1:
+                my_SPI_ControlData_on(0x0a, 2);
+                break;
+            case 2:
+                my_SPI_ControlData_on(0x0a, 4);
+                break;
+            case 3:
+                my_SPI_ControlData_off(0x0a,4);
                 break;
             }
         }
@@ -1207,13 +1227,13 @@ void PD_Main_Proc()
             {
                 if (valve_connect)
                 {
-                    my_spi_SRC(src_vbus_type, src_vbus_current, 1);
+                    my_spi_SRC(src_vbus_type, src_vbus_current, 1, pd_Test_mode);
                     pd_valve_status = 1;
                     pd_valve_time = 10;
                 }
                 else
                 {
-                    my_spi_SRC(src_vbus_type, src_vbus_current, 0);
+                    my_spi_SRC(src_vbus_type, src_vbus_current, 0, pd_Test_mode);
                 }
 
                 printf("PS ready\r\n");
@@ -1308,7 +1328,7 @@ void PD_Main_Proc()
             }
             else
             {
-                
+                pd_Test_mode = 0;
                 if (PD_Rx_Buf[6] == 0x55 && PD_Rx_Buf[7] == 0xAA && PD_Rx_Buf[8] == 0x55 && PD_Rx_Buf[9] == 0xAA)
                 {
                     if (SrcCap_size == 12)
@@ -1322,7 +1342,24 @@ void PD_Main_Proc()
                         Vbus_Select = PD_Ctl.ReqPDO_Idx;
                     }
                     valve_connect = 1;
-                }else {
+                }
+                else if (PD_Rx_Buf[6] == 0x55 && PD_Rx_Buf[7] == 0x55 && PD_Rx_Buf[8] == 0xAA && PD_Rx_Buf[9] == 0xAA)
+                {
+                    pd_Test_mode = 1;
+                    if (SrcCap_size == 12)
+                    {
+                        pd_power_error = 0;
+                        Vbus_Select = 3;
+                    }
+                    else
+                    {
+                        pd_power_error = 1;
+                        Vbus_Select = PD_Ctl.ReqPDO_Idx;
+                    }
+                    valve_connect = 1;
+                }
+                else
+                {
                     Vbus_Select = PD_Ctl.ReqPDO_Idx;
                 }
                 src_vbus_type = Vbus_Select;
@@ -1431,8 +1468,18 @@ void PD_Main_Proc()
     }
 }
 
-
 uint8_t pd_valve_send_buff[16];
+uint8_t AIO_ID_buff[4];
+uint8_t AIO_ID_flag = 0;
+
+void my_PD_AIO_ID_Out(uint8_t *buff)
+{
+    AIO_ID_flag = 1;
+    AIO_ID_buff[0] = buff[0];
+    AIO_ID_buff[1] = buff[1];
+    AIO_ID_buff[2] = buff[2];
+    AIO_ID_buff[3] = buff[3];
+}
 
 void my_pd_connect_valve() // PD 通讯测试
 {
@@ -1458,11 +1505,17 @@ void my_pd_connect_valve() // PD 通讯测试
 
             PD_Load_Header(0x00, DEF_TYPE_TEST);
             PD_Send_Handle(pd_valve_send_buff, 4);
+            pd_valve_time = 1000;
             // my_Valve_Connect_PD(0);
             // my_Valve_Set_power_error(pd_power_error);
         }
         break;
     case 2:
+        if (my_time_tick(&pd_valve_time) && AIO_ID_flag)
+        {
+            AIO_ID_flag = 0;
+            my_pd_Test_Send_ID(AIO_ID_buff);
+        }
         if (valve_connect == 0)
         {
             pd_valve_status = 0;
@@ -1501,4 +1554,37 @@ void my_pd_check_valve()
 
     PD_Load_Header(0x00, DEF_TYPE_TEST);
     PD_Send_Handle(pd_valve_send_buff, 4);
+}
+
+void my_pd_Test_Send_ID(uint8_t buff[4])
+{
+    pd_valve_send_buff[0] = 0x09;
+    pd_valve_send_buff[1] = buff[0];
+    pd_valve_send_buff[2] = buff[1];
+    pd_valve_send_buff[3] = buff[2];
+    pd_valve_send_buff[4] = buff[3];
+    pd_valve_send_buff[5] = 0x00;
+    pd_valve_send_buff[6] = 0x00;
+    pd_valve_send_buff[7] = 0x00;
+    PD_Load_Header(0x00, DEF_TYPE_TEST);
+    printf("AIO ID Send %02x  %02x  %02x  %02x\r\n",buff[0],buff[1],buff[2],buff[3]);
+    PD_Send_Handle(pd_valve_send_buff, 8);
+}
+
+void my_pd_Test_Send(uint8_t status, uint8_t gpio_status, uint8_t info_status, uint8_t *rssi)
+{
+    pd_valve_send_buff[0] = 0x08;
+    pd_valve_send_buff[1] = status;
+    pd_valve_send_buff[2] = gpio_status;
+    pd_valve_send_buff[3] = info_status;
+    pd_valve_send_buff[4] = rssi[0];
+    pd_valve_send_buff[5] = rssi[1];
+    pd_valve_send_buff[6] = rssi[2];
+    pd_valve_send_buff[7] = rssi[3];
+    pd_valve_send_buff[8] = rssi[4];
+    pd_valve_send_buff[9] = rssi[5];
+    pd_valve_send_buff[10] = 0x00;
+    pd_valve_send_buff[11] = 0x00;
+    PD_Load_Header(0x00, DEF_TYPE_TEST);
+    PD_Send_Handle(pd_valve_send_buff, 12);
 }

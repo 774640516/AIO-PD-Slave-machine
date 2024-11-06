@@ -57,6 +57,14 @@ void my_pd_close_valve();
 void my_pd_open_valve();
 void my_pd_check_valve();
 
+void my_pd_Test_Send(uint8_t status,uint8_t gpio_status, uint8_t info_status, uint8_t *rssi);
+
+void my_PD_AIO_ID_Out(uint8_t *buff);
+// void my_pd_GPIO(uint8_t data);
+// void my_pd_Factory_Info(uint8_t data);
+// void my_pd_Factory_Rssi(uint8_t rssi1, uint8_t snr1, uint8_t rssi2, uint8_t snr2);
+
+
 #ifdef __cplusplus
 }
 #endif
