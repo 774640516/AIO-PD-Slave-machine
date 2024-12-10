@@ -24,6 +24,8 @@
 #include "my_SPI_Slave.h"
 #include "my_PD_Device.h"
 
+#include "Device_GPIO_I2C.h"
+
 void ADC_VBUS_CAP_Init(void)
 {
     ADC_InitTypeDef ADC_InitStructure = {0};
@@ -94,13 +96,13 @@ int main(void)
 
     TIM1_Init(999, 48 - 1);
 
-    IIC_Init(80000, 0x02);
+    Device_GPIO_I2C_Init(0);
 
     my_SC8726_Init();
 
     my_SPI_Selve_Init();
 
-    IWDG_Feed_Init(IWDG_Prescaler_128, 4000);
+    IWDG_Feed_Init(IWDG_Prescaler_32, 2000);
     while (1)
     {
         IWDG_ReloadCounter();
@@ -108,6 +110,6 @@ int main(void)
         my_PD_Handle();
         my_SC8726_Handle();
         my_spi_handle();
-
+        
     }
 }

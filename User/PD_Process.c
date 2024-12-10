@@ -1249,19 +1249,8 @@ void PD_Main_Proc()
 
         if (PD_Ctl.PD_Comm_Timer > 5000)
         {
-            // PD_Load_Header(0x00, DEF_TYPE_PS_RDY);
-            // status = PD_Send_Handle(NULL, 0);
-            // if (status == DEF_PD_TX_OK)
-            // {
             printf("SC8726 Time Out  PD\r\n");
             PD_Ctl.PD_State = STA_IDLE;
-            //     PD_Ctl.PD_Comm_Timer = 0;
-            // }
-            // else
-            // {
-            //     PD_Ctl.PD_State = STA_TX_SOFTRST;
-            //     PD_Ctl.PD_Comm_Timer = 0;
-            // }
         }
         break;
 

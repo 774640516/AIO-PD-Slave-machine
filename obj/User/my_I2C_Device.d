@@ -23,7 +23,7 @@ User/my_I2C_Device.o: ../User/my_I2C_Device.c \
  C:\MRS_DATA\workspace\CH32X035G8U6_AIO_Slave\User/ch32x035_it.h \
  C:\MRS_DATA\workspace\CH32X035G8U6_AIO_Slave\Peripheral\inc/ch32x035_misc.h \
  C:\MRS_DATA\workspace\CH32X035G8U6_AIO_Slave\Peripheral\inc/ch32x035_usbpd.h \
- ../User/my_I2C_Device.h
+ ../User/my_I2C_Device.h ../User/Device_GPIO_I2C.h
 
 C:\MRS_DATA\workspace\CH32X035G8U6_AIO_Slave\Debug/debug.h:
 
@@ -74,3 +74,5 @@ C:\MRS_DATA\workspace\CH32X035G8U6_AIO_Slave\Peripheral\inc/ch32x035_misc.h:
 C:\MRS_DATA\workspace\CH32X035G8U6_AIO_Slave\Peripheral\inc/ch32x035_usbpd.h:
 
 ../User/my_I2C_Device.h:
+
+../User/Device_GPIO_I2C.h:

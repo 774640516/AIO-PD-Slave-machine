@@ -1,4 +1,4 @@
-User/main.o: ../User/main.c \
+User/Device_GPIO_I2C.o: ../User/Device_GPIO_I2C.c \
  C:\MRS_DATA\workspace\CH32X035G8U6_AIO_Slave\Debug/debug.h \
  C:\MRS_DATA\workspace\CH32X035G8U6_AIO_Slave\Peripheral\inc/ch32x035.h \
  C:\MRS_DATA\workspace\CH32X035G8U6_AIO_Slave\Core/core_riscv.h \
@@ -23,8 +23,7 @@ User/main.o: ../User/main.c \
  C:\MRS_DATA\workspace\CH32X035G8U6_AIO_Slave\User/ch32x035_it.h \
  C:\MRS_DATA\workspace\CH32X035G8U6_AIO_Slave\Peripheral\inc/ch32x035_misc.h \
  C:\MRS_DATA\workspace\CH32X035G8U6_AIO_Slave\Peripheral\inc/ch32x035_usbpd.h \
- ../User/PD_Process.h ../User/my_I2C_Device.h ../User/my_SPI_Slave.h \
- ../User/my_PD_Device.h ../User/Device_GPIO_I2C.h
+ ../User/Device_GPIO_I2C.h
 
 C:\MRS_DATA\workspace\CH32X035G8U6_AIO_Slave\Debug/debug.h:
 
@@ -73,13 +72,5 @@ C:\MRS_DATA\workspace\CH32X035G8U6_AIO_Slave\User/ch32x035_it.h:
 C:\MRS_DATA\workspace\CH32X035G8U6_AIO_Slave\Peripheral\inc/ch32x035_misc.h:
 
 C:\MRS_DATA\workspace\CH32X035G8U6_AIO_Slave\Peripheral\inc/ch32x035_usbpd.h:
-
-../User/PD_Process.h:
-
-../User/my_I2C_Device.h:
-
-../User/my_SPI_Slave.h:
-
-../User/my_PD_Device.h:
 
 ../User/Device_GPIO_I2C.h:

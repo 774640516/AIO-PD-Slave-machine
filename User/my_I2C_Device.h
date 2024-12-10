@@ -38,10 +38,6 @@ typedef struct
     uint8_t select;
 }SC8726_Device;
 
-
-
-
-void IIC_Init(u32 bound, u16 address);
 void my_i2c_read_addr(uint8_t addr,uint8_t len,uint8_t *read_buff);
 void my_i2c_write_addr(uint8_t addr,uint8_t len,uint8_t *write_buff);
 uint8_t my_get_status();

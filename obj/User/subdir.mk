@@ -5,6 +5,7 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../User/Device_GPIO_I2C.c \
 ../User/PD_Process.c \
 ../User/ch32x035_it.c \
 ../User/main.c \
@@ -14,6 +15,7 @@ C_SRCS += \
 ../User/system_ch32x035.c 
 
 OBJS += \
+./User/Device_GPIO_I2C.o \
 ./User/PD_Process.o \
 ./User/ch32x035_it.o \
 ./User/main.o \
@@ -23,6 +25,7 @@ OBJS += \
 ./User/system_ch32x035.o 
 
 C_DEPS += \
+./User/Device_GPIO_I2C.d \
 ./User/PD_Process.d \
 ./User/ch32x035_it.d \
 ./User/main.d \

@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "my_i2c_device.h": "c",
+        "device_gpio_i2c.h": "c"
+    }
+}

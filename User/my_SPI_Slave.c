@@ -72,7 +72,7 @@ void my_SPI_Data_Init()
     {
         my_spi.Control_Data[i] = 0;
     }
-
+    my_spi.Control_Data[0] = 0x30;
     my_spi.DIO_Status = 0;
     my_spi.DIO_Time = 0;
 
@@ -158,6 +158,9 @@ void my_SPI_Selve_Init()
 {
     my_SPI_Data_Init();
     my_SPI_Device_Init();
+
+    my_spi.DIO_Status = 1;
+    my_spi.DIO_Time = 100;
 }
 
 void my_SPI_ControlData_on(uint8_t addr, uint8_t bit)
@@ -314,7 +317,7 @@ void my_spi_SRC(uint8_t PDO_Len, uint16_t Current, uint8_t status, uint8_t test_
 {
     if (status == 0)
     {
-        my_spi.Control_Data[0] = 0x30 + 2;
+        my_spi.Control_Data[0] = 0x00 + 2;
     }
     else
     {
@@ -395,17 +398,20 @@ void my_spi_handle()
         if (my_spi.DIO_Time >= Tmr_Ms_Dlt)
         {
             my_spi.DIO_Time -= Tmr_Ms_Dlt;
-            if (my_spi.DIO_Time == 0)
-            {
-                printf("set DIO_Status = %d\r\n", my_spi.DIO_Status);
-                GPIO_WriteBit(GPIOB, GPIO_Pin_0, my_spi.DIO_Status);
-            }
         }
         else
         {
             my_spi.DIO_Time = 0;
+        }
+        if(my_spi.DIO_Time == 0)
+        {
             printf("set DIO_Status = %d\r\n", my_spi.DIO_Status);
             GPIO_WriteBit(GPIOB, GPIO_Pin_0, my_spi.DIO_Status);
+            if(my_spi.Control_Data[0] == 0x30 && my_spi.DIO_Status == 1)
+            {
+                my_spi.DIO_Status = 0;
+                my_spi.DIO_Time = 50;
+            }
         }
     }
     if (test_delay_show >= Tmr_Ms_Dlt)
@@ -504,10 +510,11 @@ void my_spi_handle()
             // printf("\r\n");
             my_pd_Test_Send(status, gpio_data, info_data, rssi_data);
         }
-        if(aio_id_flag){
+        if (aio_id_flag)
+        {
             aio_id_flag = 0;
             my_PD_AIO_ID_Out(aio_id_buff);
-            printf("AIO ID %02x  %02x  %02x  %02x\r\n",aio_id_buff[0],aio_id_buff[1],aio_id_buff[2],aio_id_buff[3]);
+            printf("AIO ID %02x  %02x  %02x  %02x\r\n", aio_id_buff[0], aio_id_buff[1], aio_id_buff[2], aio_id_buff[3]);
         }
         receive_flag = 0;
 
